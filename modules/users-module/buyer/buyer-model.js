@@ -18,7 +18,7 @@ class Model {
             const sameEmail = await sequelize.query(
                 `
                 SELECT email
-                FROM tb_users
+                FROM tb_mp_users
                 WHERE 1=1
                     AND email = :email
                 `,
@@ -35,7 +35,7 @@ class Model {
             const hash = bcrypt.hashSync(password, saltRounds);
             let resultsData = await sequelize.query(
                 `
-                INSERT INTO tb_users (email, password, first_name, last_name, address, is_seller)
+                INSERT INTO tb_mp_users (email, password, first_name, last_name, address, is_seller)
                 VALUES (:email, :password, :first_name, :last_name, :address, :is_seller)
                 `,
                 {
@@ -60,7 +60,7 @@ class Model {
             const resultData = await sequelize.query(
                 `
                 SELECT *
-                FROM tb_users
+                FROM tb_mp_users
                 WHERE 1=1
                     AND user_status = 1
                     AND email = :email

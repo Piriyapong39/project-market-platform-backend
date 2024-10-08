@@ -11,6 +11,13 @@ const PORT = config.get("PORT")
 // Middlewares
 const authentication = require("./middlewares/authentication")
 
+// Services
+const errorCollector = require("./services/error-collector")
+app.use((req, res, next) => {
+    req.errorCollector = errorCollector
+    next();
+})
+
 // Import routes
 const usersRoute = require("./modules/users-module/index")
 const productsRoute = require("./modules/products-module/index")
@@ -44,6 +51,7 @@ app.listen(PORT, () => {
         task   
             - Create new database
             - Create new table with same config
-            - Complete buy transaction
+            - Complete buy transaction  ** I forgot branch d.klui lolllllllllllllllllllllllllllllllllllllllllll!!!!!!
+            - ok let do it again
 
 */

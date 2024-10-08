@@ -7,7 +7,7 @@ class GenerateId {
             const resultData = await sequelize.query(
                 `
                 SELECT id
-                FROM tb_products
+                FROM tb_mp_products
                 ORDER BY id DESC
                 LIMIT 1
                 `,

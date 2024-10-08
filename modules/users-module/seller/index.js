@@ -7,6 +7,7 @@ Router.post("/register", async (req, res) => {
     try {
         return res.status(201).json({success: 1, data: await seller.sellerRegister(req)})
     } catch (error) {
+        req.errorCollector.collectError(error)
         return res.status(400).json({succes: 0, error: error.message})
     }
 })

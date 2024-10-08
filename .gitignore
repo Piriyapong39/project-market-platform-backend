@@ -1,3 +1,13 @@
+#
 /node_modules
 
-/config
+# Ignore logs message
+/config/logs/error.txt
+/config/logs/sql.txt
+
+#Ignore 
+/views/files/pictures
+/views/files/pdfs
+
+
+

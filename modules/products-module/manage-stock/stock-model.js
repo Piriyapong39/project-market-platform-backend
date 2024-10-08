@@ -41,7 +41,7 @@ class Model {
             const product_id = await generateId.getProductId()
             let resultInsertItem = await sequelize.query(
                 `
-                INSERT INTO tb_products (product_id, product_name, product_desc, product_stock, product_price, category_id, user_id)
+                INSERT INTO tb_mp_products (product_id, product_name, product_desc, product_stock, product_price, category_id, user_id)
                 VALUES ( :product_id, :product_name, :product_desc, :product_stock, :product_price, :category_id, :user_id)
                 `,
                 {
@@ -60,13 +60,13 @@ class Model {
             for(let i=0; i<pic_files.length; i++){
                 await sequelize.query(
                     `
-                    INSERT INTO tb_products_picture (pic_path, product_id)
+                    INSERT INTO tb_mp_products_picture (pic_path, product_id)
                     VALUES (:pic_path, :product_id)                   
                     `,
                     {
                         replacements: {
                             pic_path: pic_files[i].path,
-                            product_id
+                            product_id: product_id
                         }
                     }
                 )
@@ -82,7 +82,7 @@ class Model {
             let resultDelItem = await sequelize.query(
                 `
                 DELETE 
-                FROM tb_products
+                FROM tb_mp_products
                 WHERE 1=1
                     AND user_id = :user_id
                     AND product_id = :product_id
@@ -98,7 +98,7 @@ class Model {
             let resultDelPic = await sequelize.query(
                 `
                 DELETE 
-                FROM tb_products_picture
+                FROM tb_mp_products_picture
                 WHERE 1=1
                     AND product_id = :product_id
                 `,

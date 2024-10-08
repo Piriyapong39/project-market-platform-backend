@@ -1,4 +1,5 @@
 const Model = require("./seller-model")
+
 class Seller extends Model {
     constructor(){
         super();
