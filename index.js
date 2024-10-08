@@ -40,14 +40,10 @@ app.listen(PORT, () => {
 
 /*
 
-        Job for today
-
-
-
-
-
-        knowledge
-        if you want to loop inside loop use => for(let i=0; i<xxx.length; i++)
-        don't use forEach cause it have to many resolve and reject cases and you must use promise all in function
+    2024-10-08
+        task   
+            - Create new database
+            - Create new table with same config
+            - Complete buy transaction
 
 */
