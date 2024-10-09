@@ -48,21 +48,33 @@ class Stock extends Model {
     async updateStockProduct(req){
         try {
             const user_id = req.user.user_id
-            const { product_id, value} = req.body
-            if(!product_id || !value){
-                throw new Error("Product ID and Value is required")
+            const { product_id, adj_value} = req.body
+            if(!product_id || !adj_value || typeof(adj_value) !== "number"){
+                throw new Error("Product ID and adj_value is required or adj_value must be number")
             }
-            return await this._updateStockProduct(user_id, product_id, value)
+            return await this._updateStockProduct(user_id, product_id, adj_value)
         } catch (error) {
             throw error
         }
     }
     async disableEnableProduct(req){
         try {
+            let current_status = null
+            let expect_status = null
+            const expectStatus = req.expectStatus
             const user_id = req.user.user_id
-            const {product_id, expect_status, current_status} = req.body
-            if(!product_id){
-                throw new Error("Product ID is required")
+            const { product_id } = req.body
+            if(!product_id || expectStatus === undefined){
+                throw new Error("Product ID and Expect status are required")
+            }
+            if(expectStatus === 0){
+                current_status = 1
+                expect_status = 0
+            } else if (expectStatus === 1){
+                current_status = 0
+                expect_status = 1
+            } else {
+                throw new Error("req.expectStatus is wrong format")
             }
             return await this._disableEnableProduct(user_id, product_id, expect_status, current_status)
         } catch (error) {

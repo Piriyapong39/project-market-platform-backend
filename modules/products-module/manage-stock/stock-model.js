@@ -1,5 +1,6 @@
 // dependencies
 const { sequelize, QueryTypes } = require("../../../config/database")
+const fs = require("fs")
 
 // services
 const GenerateId = require("../../../services/generate-id")
@@ -13,14 +14,6 @@ class Model {
         try {
             const resultsProduct = await sequelize.query(
                 `
-                SELECT 
-                    product_id, product_name,
-                    product_desc, product_price, 
-                    product_stock, category_name
-                FROM 
-                    vw_get_product_seller
-                WHERE 1=1
-                    AND user_id = :user_id
                 `,
                 {
                     replacements: {
@@ -29,14 +22,6 @@ class Model {
                     type: QueryTypes.SELECT
                 }
             )
-            const resultsData = []
-            for(let i=0; i<resultsProduct.length; i++){
-                const picsPath = await sequelize.query(`CALL sp_get_pic_path('${resultsProduct[i].product_id}')`)
-                const picsPathArr = picsPath.map((element) => element.pic_path)
-                resultsProduct[i].pic_path = picsPathArr
-                resultsData.push(resultsProduct[i])
-            }
-
             return resultsData
         } catch (error) {
             throw error
@@ -67,7 +52,7 @@ class Model {
                 return upload.uploadProductPic(file);
             }))
             let resultUploadPic = ""
-            picturePaths.length !== 0 ? resultUploadPic = "Upload Pictures successfully" : resultUploadPic = "Upload picture fail"
+            picturePaths.length !== 0 ? resultUploadPic = "Upload Pictures successfully" : resultUploadPic = "No picture uploaded"
             for (const pic_path of picturePaths) {
                 await sequelize.query(
                     `
@@ -91,6 +76,7 @@ class Model {
     }
     async _deleteProduct(user_id, product_id){
         try {
+            // delete product and pictures in database
             let resultsData = await sequelize.query(
                 'CALL sp_delete_product(:user_id , :product_id)',
                 {
@@ -98,36 +84,45 @@ class Model {
                         user_id,
                         product_id
                     },
-                    type: QueryTypes.SELECT
+                    type: QueryTypes.DELETE
                 }
             )
+            // delete pictures files in storage
+            if(resultsData[0].pic_paths === null || resultsData[0].product_affected === 0){
+                resultsData = "Product not found"
+            }else{
+                const picsPathArr = resultsData[0].pic_paths.split(",")
+                picsPathArr.forEach(e => {
+                    fs.rm(e, {recursive: true}, (error) => { 
+                        if(error){ 
+                            throw new Error(error)
+                        } 
+                    }) 
+                })
+            }
             return resultsData
         } catch (error) {
             throw error
         }
     }
-    async _updateStockProduct(user_id, product_id, value){
+    async _updateStockProduct(user_id, product_id, adj_value){
         try {
-            await sequelize.query(
-                `CALL sp_update_stock(:user_id, :product_id, :value, @result)`,
+            let resultData = await sequelize.query(
+                `CALL sp_update_stocks(:user_id, :product_id, :adj_value)`,
                 {
                     replacements: {
                         user_id,
                         product_id,
-                        value
+                        adj_value
                     },
                     type: QueryTypes.UPDATE
                 }
             )
-            let resultData = await sequelize.query(
-                `
-                SELECT @result AS result
-                `,
-                {
-                    type: QueryTypes.SELECT
-                }
-            )
-            Number(resultData[0].result) === -1 ? resultData = "Products in stock is not enough": resultData = Number(resultData[0].result)
+            // 1 => update stock success , -1 => update stock fail
+            if(resultData[0].result === -1){
+                throw new Error("Not enough products in stock to decrease")
+            }
+            resultData = "Update stock successfully"
             return resultData
         } catch (error) {
             throw error
@@ -135,26 +130,23 @@ class Model {
     }
     async _disableEnableProduct(user_id, product_id, expect_status, current_status){
         try {
-            const resultsData = await sequelize.query(
-                `
-                UPDATE tb_products
-                SET product_status = :expect_status
-                WHERE 1=1
-                    AND product_status = :current_status
-                    AND user_id = :user_id                    
-                    AND product_id = :product_id
-                `,
+            let resultsData = await sequelize.query(
+                `CALL sp_disable_or_enable_product(:user_id, :product_id, :expect_status, :current_status)`,
                 {
                     replacements: {
-                        expect_status,
-                        current_status,
-                        user_id,
-                        product_id
+                        user_id, 
+                        product_id, 
+                        expect_status, 
+                        current_status
                     },
-                    type: QueryTypes.RAW
+                    type: QueryTypes.UPDATE
                 }
             )
-            return resultsData[0].info
+            // resultData means affected_row
+            if(resultsData[0].affected_rows === 0){
+                throw new Error("Not found product to disable or enable")
+            }
+            return resultsData
         } catch (error) {
             throw error
         }

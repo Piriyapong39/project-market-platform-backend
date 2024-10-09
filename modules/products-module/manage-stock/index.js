@@ -47,6 +47,7 @@ Router.post("/update-stock-product", authentication, isSeller, async (req, res) 
 })
 Router.post("/disable-product", authentication, isSeller, async (req, res) => {
     try {
+        req.expectStatus = 0
         return res.status(200).json({success: 1, data: await stock.disableEnableProduct(req)})
     } catch (error) {
         req.errorCollector.collectError(error)
@@ -55,6 +56,7 @@ Router.post("/disable-product", authentication, isSeller, async (req, res) => {
 })
 Router.post("/enable-product", authentication, isSeller, async (req, res) => {
     try {
+        req.expectStatus = 1
         return res.status(200).json({success: 1, data: await stock.disableEnableProduct(req)})
     } catch (error) {
         req.errorCollector.collectError(error)

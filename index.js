@@ -45,17 +45,3 @@ app.listen(PORT, () => {
 })
 
 
-/*
-
-    2024-10-08
-        task   
-            - Create new database                   -- done
-            - Create new table with same config     -- done
-            - Complete buy transaction 
-    
-    2024-11-08
-        task
-            - Change sql in backend to procedure in navicat
-            - Upload picture shoulnd not be middlewares because uploads done bofore insert products         -- done
-
-*/

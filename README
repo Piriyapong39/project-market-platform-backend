@@ -1,0 +1,15 @@
+
+job description
+    2024-10-08
+        task   
+            - Create new database                   -- done
+            - Create new table with same config     -- done
+            - Complete buy transaction              -- not start
+    2024-11-08
+        task
+            - Change sql in ./module/products-module/manage-stock/stock-model to procedure in navicat       -- on progress 
+                    *** route /get-product ----------> on progress
+            - Upload picture shoulnd not be middlewares because uploads done bofore insert products         -- done
+
+    
+

@@ -6,7 +6,7 @@ class ErrorCollector {
         const datetime = moment().format("YYYY-MM-DD HH:MM:SS")
         const errorMessage = `${datetime} ----> ${error}\n`
         fs.appendFileSync("./config/logs/error.txt", errorMessage, (error) => {
-            console.log(error)
+            throw new Error(error)
         })
     }
 }
