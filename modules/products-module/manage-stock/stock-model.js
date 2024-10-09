@@ -91,48 +91,20 @@ class Model {
     }
     async _deleteProduct(user_id, product_id){
         try {
-            // delete product in database
-            let resultDelItem = await sequelize.query(
-                `
-                DELETE 
-                FROM tb_mp_products
-                WHERE 1=1
-                    AND user_id = :user_id
-                    AND product_id = :product_id
-                `,
+            let resultsData = await sequelize.query(
+                'CALL sp_delete_product(:user_id , :product_id)',
                 {
                     replacements: {
                         user_id,
                         product_id
                     },
-                    type: QueryTypes.BULKDELETE
+                    type: QueryTypes.SELECT
                 }
             )
-            // delete pictures path in database
-            let resultDelPic = await sequelize.query(
-                `
-                DELETE 
-                FROM tb_mp_products_picture
-                WHERE 1=1
-                    AND product_id = :product_id
-                `,
-                {
-                    replacements: {
-                        user_id,
-                        product_id
-                    },
-                    type: QueryTypes.BULKDELETE
-                }
-            )
-            console.log(resultDelPic)
-            //
-            resultDelItem === 0 ? resultDelItem = "Item is not found": resultDelItem = `${resultDelItem} deleted`
-            resultDelPic === 0 ? resultDelPic = "Pictures are not found": resultDelPic = `${resultDelPic} deleted`            
-            return {resultItem: resultDelItem, resultPictures: resultDelPic}
+            return resultsData
         } catch (error) {
             throw error
         }
-
     }
     async _updateStockProduct(user_id, product_id, value){
         try {
