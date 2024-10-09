@@ -1,6 +1,12 @@
+// dependencies
 const { sequelize, QueryTypes } = require("../../../config/database")
+
+// services
 const GenerateId = require("../../../services/generate-id")
 const generateId = new GenerateId();
+const Upload = require("../../../services/upload")
+const upload = new Upload();
+
 class Model {
     constructor(){}
     async _getProducts(user_id){
@@ -36,7 +42,7 @@ class Model {
             throw error
         }
     }
-    async _insertProduct(product_name, product_desc, product_stock, product_price, category_id, user_id, pic_files){
+    async _insertProduct(product_name, product_desc, product_stock, product_price, category_id, user_id, pictureFiles){
         try {
             const product_id = await generateId.getProductId()
             let resultInsertItem = await sequelize.query(
@@ -57,7 +63,12 @@ class Model {
                     type: QueryTypes.INSERT
                 }
             )
-            for(let i=0; i<pic_files.length; i++){
+            const picturePaths = await Promise.all(pictureFiles.map(file => {
+                return upload.uploadProductPic(file);
+            }))
+            let resultUploadPic = ""
+            picturePaths.length !== 0 ? resultUploadPic = "Upload Pictures successfully" : resultUploadPic = "Upload picture fail"
+            for (const pic_path of picturePaths) {
                 await sequelize.query(
                     `
                     INSERT INTO tb_mp_products_picture (pic_path, product_id)
@@ -65,20 +76,22 @@ class Model {
                     `,
                     {
                         replacements: {
-                            pic_path: pic_files[i].path,
-                            product_id: product_id
-                        }
+                            pic_path,
+                            product_id
+                        },
+                        type: QueryTypes.INSERT
                     }
-                )
+                );
             }
             resultInsertItem[1] === 1 ? resultInsertItem = "Insert item successfully" : resultInsertItem = resultInsertItem
-            return resultInsertItem
+            return { product: resultInsertItem, picture: resultUploadPic}
         } catch (error) {
             throw error
         }
     }
     async _deleteProduct(user_id, product_id){
         try {
+            // delete product in database
             let resultDelItem = await sequelize.query(
                 `
                 DELETE 
@@ -95,6 +108,7 @@ class Model {
                     type: QueryTypes.BULKDELETE
                 }
             )
+            // delete pictures path in database
             let resultDelPic = await sequelize.query(
                 `
                 DELETE 
@@ -110,6 +124,8 @@ class Model {
                     type: QueryTypes.BULKDELETE
                 }
             )
+            console.log(resultDelPic)
+            //
             resultDelItem === 0 ? resultDelItem = "Item is not found": resultDelItem = `${resultDelItem} deleted`
             resultDelPic === 0 ? resultDelPic = "Pictures are not found": resultDelPic = `${resultDelPic} deleted`            
             return {resultItem: resultDelItem, resultPictures: resultDelPic}

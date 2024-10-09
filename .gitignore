@@ -2,12 +2,11 @@
 /node_modules
 
 # Ignore logs message
-/config/logs/error.txt
-/config/logs/sql.txt
+/config/logs/*
 
-#Ignore 
-/views/files/pictures
-/views/files/pdfs
 
+#Ignore files in pictures and pdfs
+/views/files/pictures/*
+/views/files/pdfs/*
 
 

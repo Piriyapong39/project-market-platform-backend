@@ -16,6 +16,7 @@ Router.post("/login", async (req, res) => {
     try {
         return res.status(200).json({success: 1, data: await seller.sellerLogin(req)})
     } catch (error) {
+        req.errorCollector.collectError(error)
         return res.status(400).json({succes: 0, error: error.message})
     }
 })

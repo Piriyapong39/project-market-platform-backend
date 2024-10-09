@@ -20,7 +20,7 @@ class Stock extends Model {
     async insertProduct(req){
         try {
             const user_id = req.user.user_id
-            const pic_path = req.files
+            const pictureFiles = req.files
             const { product_name, product_desc, product_stock, product_price, category_id} = req.body
             if(!product_name || !product_desc || !product_stock || !product_price || !category_id){
                 throw new Error("You are missing some data please insert all data")
@@ -28,7 +28,7 @@ class Stock extends Model {
             if(Number(product_stock)<= 0 || Number(product_price) <= 0){
                 throw new Error("Price and Stock must more than 0 ")
             }
-            return await this._insertProduct(product_name, product_desc, product_stock, product_price, category_id, user_id, pic_path)
+            return await this._insertProduct(product_name, product_desc, product_stock, product_price, category_id, user_id, pictureFiles)
         } catch (error) {
             throw error
         }
