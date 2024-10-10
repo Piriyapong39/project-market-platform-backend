@@ -12,5 +12,4 @@ job description
     2024-10-10
         task
             - in services => class generate change it to function in database   -- done
-            - add services remove-files.js don't be careless                    -- In progress
-                    - missing loop check all extname in method
+            - add services remove-files.js don't be careless                    -- done
