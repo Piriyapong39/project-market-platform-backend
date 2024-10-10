@@ -13,15 +13,18 @@ class Model {
     async _getProducts(user_id){
         try {
             const resultsProduct = await sequelize.query(
-                `
-                `,
+                `CALL sp_get_products_seller(:user_id)`,
                 {
                     replacements: {
                         user_id
                     },
-                    type: QueryTypes.SELECT
+                    type: QueryTypes.RAW
                 }
             )
+            const resultsData = resultsProduct.map( e => {
+                e.pic_paths = e.pic_paths.split(";")
+                return e
+            })
             return resultsData
         } catch (error) {
             throw error
