@@ -4,11 +4,13 @@ job description
         task   
             - Create new database                   -- done
             - Create new table with same config     -- done
-            - Complete buy transaction              -- not start
+            - Complete buy transaction              -- in progress
     2024-11-08
         task
             - Change sql in ./module/products-module/manage-stock/stock-model to procedure in navicat       -- done
             - Upload picture shoulnd not be middlewares because uploads done bofore insert products         -- done
-
-    
-
+    2024-10-10
+        task
+            - in services => class generate change it to function in database   -- done
+            - add services remove-files.js don't be careless                    -- In progress
+                    - missing loop check all extname in method

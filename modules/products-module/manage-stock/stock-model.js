@@ -1,12 +1,11 @@
 // dependencies
 const { sequelize, QueryTypes } = require("../../../config/database")
-const fs = require("fs")
 
 // services
-const GenerateId = require("../../../services/generate-id")
-const generateId = new GenerateId();
 const Upload = require("../../../services/upload")
 const upload = new Upload();
+const RemoveFile = require("../../../services/remove-files")
+const removeFile = new RemoveFile();
 
 class Model {
     constructor(){}
@@ -32,47 +31,26 @@ class Model {
     }
     async _insertProduct(product_name, product_desc, product_stock, product_price, category_id, user_id, pictureFiles){
         try {
-            const product_id = await generateId.getProductId()
+            const picturePaths = await Promise.all(pictureFiles.map(file => {
+                return upload.uploadProductPic(file);
+            }))
             let resultInsertItem = await sequelize.query(
-                `
-                INSERT INTO tb_mp_products (product_id, product_name, product_desc, product_stock, product_price, category_id, user_id)
-                VALUES ( :product_id, :product_name, :product_desc, :product_stock, :product_price, :category_id, :user_id)
-                `,
+                `CALL sp_insert_product(:product_name, :product_desc, :product_stock, :product_price, :category_id, :user_id, :picturePaths)`,
                 {
                     replacements: {
-                        product_id,
                         product_name, 
                         product_desc, 
                         product_stock, 
                         product_price, 
                         category_id,
-                        user_id
+                        user_id,
+                        picturePaths: picturePaths.join(",")
                     },
                     type: QueryTypes.INSERT
                 }
             )
-            const picturePaths = await Promise.all(pictureFiles.map(file => {
-                return upload.uploadProductPic(file);
-            }))
-            let resultUploadPic = ""
-            picturePaths.length !== 0 ? resultUploadPic = "Upload Pictures successfully" : resultUploadPic = "No picture uploaded"
-            for (const pic_path of picturePaths) {
-                await sequelize.query(
-                    `
-                    INSERT INTO tb_mp_products_picture (pic_path, product_id)
-                    VALUES (:pic_path, :product_id)                   
-                    `,
-                    {
-                        replacements: {
-                            pic_path,
-                            product_id
-                        },
-                        type: QueryTypes.INSERT
-                    }
-                );
-            }
-            resultInsertItem[1] === 1 ? resultInsertItem = "Insert item successfully" : resultInsertItem = resultInsertItem
-            return { product: resultInsertItem, picture: resultUploadPic}
+            console.log(resultInsertItem)
+            return resultInsertItem
         } catch (error) {
             throw error
         }
@@ -95,13 +73,7 @@ class Model {
                 resultsData = "Product not found"
             }else{
                 const picsPathArr = resultsData[0].pic_paths.split(",")
-                picsPathArr.forEach(e => {
-                    fs.rm(e, {recursive: true}, (error) => { 
-                        if(error){ 
-                            throw new Error(error)
-                        } 
-                    }) 
-                })
+                removeFile.removePic(picsPathArr)
             }
             return resultsData
         } catch (error) {
