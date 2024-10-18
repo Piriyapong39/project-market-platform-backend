@@ -4,6 +4,7 @@ var jwt = require('jsonwebtoken');
 function authentication(req, res, next){
     try {
         const token = req.headers.authorization
+        console.log(token)
         if(!token){
             throw new Error("Missing token or invalid token format")
         }

@@ -1,6 +1,5 @@
 // Dependencies
 const { sequelize, QueryTypes } = require("../../../config/database")
-const moment = require("moment")
 const config = require("config")
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -32,8 +31,8 @@ class Model {
             const hash = await bcrypt.hashSync(password, saltRounds);
             let resulstData = await sequelize.query(
                 `
-                INSERT INTO tb_mp_users (email, password, first_name, last_name, address, created, is_seller)
-                VALUES (:email, :password, :first_name, :last_name, :address, :created, :is_seller)
+                INSERT INTO tb_mp_users (email, password, first_name, last_name, address, is_seller)
+                VALUES (:email, :password, :first_name, :last_name, :address, :is_seller)
                 `,
                 {
                     replacements: {
@@ -42,14 +41,28 @@ class Model {
                         first_name,
                         last_name,
                         address,
-                        created: moment().format("YYYY-MM-DD hh:mm:ss"),
                         is_seller
                     },
                     type: QueryTypes.INSERT
                 }
             )
-            resulstData[1] === 1 ? resulstData = "Register successfully": resulstData = resulstData
-            return resulstData
+            console.log(resulstData)
+            const token = jwt.sign(
+                {
+                    user_id: resulstData[0],
+                    email,
+                    first_name,
+                    last_name,
+                    address,
+                    is_seller: 1,
+                    user_status: 1
+                }, 
+                JWT_SECRET_KEY, 
+                { 
+                    expiresIn: '3h' 
+                }
+            );
+            return token
         } catch (error) {
             throw error
         }
@@ -80,7 +93,7 @@ class Model {
             if(bcrypt.compareSync(password, resultData[0].password) === false){
                 throw new Error("Wrong password try again")
             }
-            var token = jwt.sign(
+            const token = jwt.sign(
                 {
                     user_id: resultData[0].user_id,
                     email: resultData[0].email,

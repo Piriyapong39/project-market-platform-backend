@@ -3,6 +3,7 @@ const Router = express.Router();
 const Seller = require("./seller-controller")
 const seller = new Seller();
 
+
 Router.post("/register", async (req, res) => {
     try {
         return res.status(201).json({success: 1, data: await seller.sellerRegister(req)})
