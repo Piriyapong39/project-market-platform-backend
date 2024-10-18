@@ -30,6 +30,20 @@ class Seller extends Model {
             throw error
         }
     }
+    async buyerToSeller(req){
+        try {
+            if(!req.user){
+                throw new Error("Your important data is missing")
+            }
+            const { user_id, is_seller } = req.user
+            if(is_seller !== 0){
+                throw new Error("You are already seller")
+            }
+            return await this._buyerToSeller(user_id, is_seller)
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Seller

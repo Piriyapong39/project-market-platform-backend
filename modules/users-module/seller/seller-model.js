@@ -28,7 +28,7 @@ class Model {
             if(sameEmail.length > 0){
                 throw new Error("This email is already used")
             }
-            const hash = await bcrypt.hashSync(password, saltRounds);
+            const hash = bcrypt.hashSync(password, saltRounds);
             let resulstData = await sequelize.query(
                 `
                 INSERT INTO tb_mp_users (email, password, first_name, last_name, address, is_seller)
@@ -109,6 +109,29 @@ class Model {
                 }
             );
             return token
+        } catch (error) {
+            throw error
+        }
+    }
+    async _buyerToSeller(user_id, is_seller){
+        try {
+            console.log(is_seller)
+            let resultsData = await sequelize.query(
+                `CALL sp_update_buyer_to_seller(:user_id, :is_seller)`,
+                {
+                    replacements: {
+                        user_id,
+                        is_seller
+                    },
+                    type: QueryTypes.UPDATE
+                }
+            )
+            if(resultsData[0].affected_rows === 1){
+                resultsData = "Update to seller successfully"
+            }else{
+                throw new Error("Error in update buyer to seller")
+            }
+            return resultsData
         } catch (error) {
             throw error
         }

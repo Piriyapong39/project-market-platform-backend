@@ -1,9 +1,9 @@
-// services
-
-function isSeller(req, res, next){
+function isNotSeller(req, res, next){
     try {
+        console.log(req.user)
         const isSeller = req.user.is_seller
-        if(isSeller === 0){
+
+        if(isSeller !== 0){
             throw new Error("You are not allow to use this function")
         }
         next();
@@ -13,4 +13,4 @@ function isSeller(req, res, next){
     }
 }
 
-module.exports = isSeller
+module.exports = isNotSeller
