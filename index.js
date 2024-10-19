@@ -5,20 +5,6 @@ const config = require("config")
 const cors = require("cors")
 const app = express()
 app.use(bodyParser.json())
-
-// Connect with frontend
-// app.use(cors({
-//     origin: [  
-//         "http://173.16.1.123:8000",
-//         "http://173.16.0.115:8000",
-//         "http://127.0.0.1:8000",
-//         "http://172.26.240.1:8000",
-//         "http://172.17.128.1:8000",
-        
-//     ],
-//     credentials: true, 
-// }));
-
 app.use(cors())
 
 // ENV

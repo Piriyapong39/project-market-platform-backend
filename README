@@ -4,7 +4,7 @@ job description
         task   
             - Create new database                   -- done
             - Create new table with same config     -- done
-            - Complete buy transaction              -- in progress
+            - Complete buy transaction              -- in progress 
     2024-11-08
         task
             - Change sql in ./module/products-module/manage-stock/stock-model to procedure in navicat       -- done
@@ -17,5 +17,6 @@ job description
 
     2024-10-19
         task
-            create class jwt or function : not complete but my program is still running so, i don't care -- done
-            manage seller route     -- in progress
+            create class jwt or function                -- done
+            manage seller route                         -- in progress
+            swagger ui                                  -- not started yet
