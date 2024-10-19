@@ -8,6 +8,10 @@ const bcrypt = require('bcrypt');
 const saltRounds = config.get("saltRounds")
 const JWT_SECRET_KEY = config.get("JWT_SECRET_KEY")
 
+// Services
+const JwtService = require("../../../services/jwt-service")
+const jwtService = new JwtService();
+
 class Model {
     constructor(){}
     async _sellerRegister(email, password, first_name, last_name, address, is_seller){
@@ -113,10 +117,10 @@ class Model {
             throw error
         }
     }
-    async _buyerToSeller(user_id, is_seller){
+    async _buyerToSeller(user_id, is_seller, email){
         try {
-            console.log(is_seller)
-            let resultsData = await sequelize.query(
+            let newToken
+            const resultsData = await sequelize.query(
                 `CALL sp_update_buyer_to_seller(:user_id, :is_seller)`,
                 {
                     replacements: {
@@ -126,12 +130,32 @@ class Model {
                     type: QueryTypes.UPDATE
                 }
             )
-            if(resultsData[0].affected_rows === 1){
-                resultsData = "Update to seller successfully"
-            }else{
-                throw new Error("Error in update buyer to seller")
+            if(resultsData[0].affected_rows === 0){
+                throw new Error("Something is error in buyer to seller")
+
             }
-            return resultsData
+            newToken = await jwtService.genNewToken(user_id, email)
+            return newToken
+        } catch (error) {
+            throw error
+        }
+    }
+    async _isNotSellerCheck(user_id, email){
+        try {
+            let result = await sequelize.query(
+                `CALL sp_get_user_info(:user_id, :email)`,
+                {
+                    replacements: {
+                        user_id, 
+                        email
+                    },
+                    type: QueryTypes.RAW
+                }
+            )
+            if(result[0].is_seller !== 0){
+                throw new Error("You are seller")
+            }
+            return result
         } catch (error) {
             throw error
         }

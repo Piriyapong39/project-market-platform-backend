@@ -7,7 +7,6 @@ const seller = new Seller();
 const authentication = require("../../../middlewares/authentication")
 const isNotSeller = require("../../../middlewares/is-not-seller")
 
-
 Router.post("/register", async (req, res) => {
     try {
         return res.status(201).json({success: 1, data: await seller.sellerRegister(req)})
@@ -26,10 +25,9 @@ Router.post("/login", async (req, res) => {
     }
 })
 
-Router.post("/is-not-seller", authentication, isNotSeller, (req, res)=>{
+Router.post("/is-not-seller", authentication, isNotSeller, async (req, res)=>{
     try {
-        console.log(1)
-        res.status(200).json({success:1, data: "You are allow to use this"})
+        res .status(200).json({success:1, data: await seller.isNotSellerCheck(req)})
     } catch (error) {
         res.status(400).json({succes: 0, error: error.message})
     }

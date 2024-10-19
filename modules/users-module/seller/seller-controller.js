@@ -35,11 +35,19 @@ class Seller extends Model {
             if(!req.user){
                 throw new Error("Your important data is missing")
             }
-            const { user_id, is_seller } = req.user
+            const { user_id, is_seller, email } = req.user
             if(is_seller !== 0){
                 throw new Error("You are already seller")
             }
-            return await this._buyerToSeller(user_id, is_seller)
+            return await this._buyerToSeller(user_id, is_seller, email)
+        } catch (error) {
+            throw error
+        }
+    }
+    async isNotSellerCheck(req){
+        try {
+            const { user_id, email } = req.user
+            return await this._isNotSellerCheck(user_id, email)
         } catch (error) {
             throw error
         }
