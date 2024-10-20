@@ -1,5 +1,7 @@
 // dependencies
 const { sequelize, QueryTypes } = require("../../../config/database")
+const path = require("path")
+const fs = require("fs")
 
 // services
 const Upload = require("../../../services/upload")
@@ -24,6 +26,7 @@ class Model {
                 e.pic_paths = e.pic_paths.split(";")
                 return e
             })
+            console.log(resultsData)
             return resultsData
         } catch (error) {
             throw error
@@ -31,9 +34,29 @@ class Model {
     }
     async _insertProduct(product_name, product_desc, product_stock, product_price, category_id, user_id, pictureFiles){
         try {
-            const picturePaths = await Promise.all(pictureFiles.map(file => {
-                return upload.uploadProductPic(file);
+
+            // get product id to create folder
+            const productId = await sequelize.query(
+                `SELECT fn_gen_product_id() AS product_id`,
+                {
+                    type: QueryTypes.SELECT
+                }
+            )
+            console.log(category_id)
+            console.log(productId[0].product_id)
+            // create folder
+            const folderName = path.join(__dirname, `../../../public/uploads/product-pictures/${category_id}/${productId[0].product_id}`)
+            if(!fs.existsSync(folderName)) {
+                fs.mkdirSync(folderName);
+            }else{
+                throw new Error("Cannot create picture folder")
+            }
+            console.log(productId)
+            // Loop create picture files
+            const picturePaths = await Promise.all(pictureFiles.map((file) => {
+                return upload.uploadProductPic(file, category_id, productId[0].product_id);
             }))
+            
             let resultInsertItem = await sequelize.query(
                 `CALL sp_insert_product(:product_name, :product_desc, :product_stock, :product_price, :category_id, :user_id, :picturePaths)`,
                 {

@@ -5,9 +5,6 @@ class Stock extends Model {
     }
     async getProducts(req){
         try {
-            /*
-                Next time add more parameter but now it's just all seller's products 
-            */
            const user_id = req.user.user_id
            if(!user_id){
                 throw new Error("User ID is required")

@@ -50,7 +50,6 @@ class Model {
                     type: QueryTypes.INSERT
                 }
             )
-            console.log(resulstData)
             const token = jwt.sign(
                 {
                     user_id: resulstData[0],

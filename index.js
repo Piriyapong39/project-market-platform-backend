@@ -3,9 +3,13 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const config = require("config")
 const cors = require("cors")
+const path = require('path');
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
+
+// Picture files
+app.use('/picture-files', express.static(path.join(__dirname, 'public', 'uploads', 'product-pictures')));
 
 // ENV
 const PORT = config.get("PORT")

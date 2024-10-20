@@ -1,5 +1,8 @@
+// Dependecies
 const express = require("express")
 const Router = express.Router();
+
+// Import controllers
 const Seller = require("./seller-controller")
 const seller = new Seller();
 

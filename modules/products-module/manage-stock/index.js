@@ -12,17 +12,6 @@ const isSeller = require("../../../middlewares/is-seller")
 const uploadFiles = require("../../../middlewares/upload-files-middleware")
 
 // Routes
-Router.get("/seller-homepage", authentication, isSeller, async (req, res) =>{
-    try {
-        console.log(req.user)
-        return res.status(200).json({success: 1, data: "Hello seller"})
-    } catch (error) {
-        req.errorCollector.collectError(error)
-        res.status(400).json({success: 0, error: error.message})
-    }
-})
-
-
 Router.get("/get-product", authentication, isSeller, async (req, res) => {
     try {
         return res.status(200).json({success: 1, data: await stock.getProducts(req)})

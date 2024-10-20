@@ -4,14 +4,18 @@ const fs = require("fs")
 
 class Upload {
     constructor(){}
-    async uploadProductPic(file) {
+    async uploadProductPic(file, category_id, productFolder) {
         try {
-            const extName = path.extname(file.originalname)
+            console.log(productFolder)
+            const extName = path.extname(file.originalname).toLowerCase();
+            console.log(extName)
             const fileName = uuidv4() + extName;  
-            const filePath = path.join(__dirname, "../views/files/pictures", fileName);
+            const filePath = path.join(__dirname, `../public/uploads/product-pictures/${category_id}/${productFolder}`, fileName);
             if(extName !== ".png" && extName !== ".jpeg" && extName !== ".jpg"){
                 throw new Error("Only png, jpeg and jpg is allow")
             }
+
+            // write picture file
             await fs.promises.writeFile(filePath, file.buffer);
             return filePath;
         } catch (error) {

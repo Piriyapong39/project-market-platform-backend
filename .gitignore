@@ -1,4 +1,5 @@
-#
+
+# ignore node modules
 /node_modules
 
 # Ignore logs message
@@ -6,7 +7,6 @@
 
 
 #Ignore files in pictures and pdfs
-/views/files/pictures/*
-/views/files/pdfs/*
-
-
+/public/uploads/product-pictures/*
+/public/uploads/pdf/*
+/public/uploads/exel/*
