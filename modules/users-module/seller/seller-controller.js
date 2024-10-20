@@ -52,6 +52,17 @@ class Seller extends Model {
             throw error
         }
     }
+    async sellerAuthen(req){
+        try {
+            const { user_id, email, first_name, last_name, address, is_seller } = req.user
+            if(!user_id || !email || !first_name || !last_name || !address || !is_seller){
+                throw new Error("You are not allow to stay on seller page")
+            }
+            return await this._sellerAuthen(user_id, email, first_name, last_name, address, is_seller)
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Seller

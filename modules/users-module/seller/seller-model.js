@@ -160,6 +160,21 @@ class Model {
             throw error
         }
     }
+    async _sellerAuthen(user_id, email, first_name, last_name, address, is_seller){
+        try {
+            const resulstData = {
+                user_id,
+                email,
+                first_name,
+                last_name,
+                address,
+                is_seller
+            }
+            return resulstData
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Model

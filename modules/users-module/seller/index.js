@@ -6,6 +6,7 @@ const seller = new Seller();
 // Middlewares
 const authentication = require("../../../middlewares/authentication")
 const isNotSeller = require("../../../middlewares/is-not-seller")
+const isSeller = require("../../../middlewares/is-seller")
 
 Router.post("/register", async (req, res) => {
     try {
@@ -39,6 +40,14 @@ Router.post("/to-seller", authentication, async (req, res)=>{
     } catch (error) {
         req.errorCollector.collectError(error)
         res.status(400).json({success: 0, error: error.message})
+    }
+})
+
+Router.post("/authen", authentication, isSeller, async (req, res)=>{
+    try {
+        return res.status(200).json({success: 1, data: await seller.sellerAuthen(req)})
+    } catch (error) {
+        return res.status(400).json({success: 0, error: error.message})
     }
 })
 
