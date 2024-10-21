@@ -5,8 +5,10 @@ const config = require("config")
 const cors = require("cors")
 const path = require('path');
 const app = express()
+
 app.use(bodyParser.json())
 app.use(cors())
+app.use(express.urlencoded({ extended: true }));
 
 // Picture files
 app.use('/picture-files', express.static(path.join(__dirname, 'public', 'uploads', 'product-pictures')));

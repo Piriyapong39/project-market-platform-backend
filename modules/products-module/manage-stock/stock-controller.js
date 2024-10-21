@@ -16,6 +16,7 @@ class Stock extends Model {
     }
     async insertProduct(req){
         try {
+            console.log(2)
             const user_id = req.user.user_id
             const pictureFiles = req.files
             const { product_name, product_desc, product_stock, product_price, category_id} = req.body

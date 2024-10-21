@@ -6,9 +6,7 @@ class Upload {
     constructor(){}
     async uploadProductPic(file, category_id, productFolder) {
         try {
-            console.log(productFolder)
             const extName = path.extname(file.originalname).toLowerCase();
-            console.log(extName)
             const fileName = uuidv4() + extName;  
             const filePath = path.join(__dirname, `../public/uploads/product-pictures/${category_id}/${productFolder}`, fileName);
             if(extName !== ".png" && extName !== ".jpeg" && extName !== ".jpg"){

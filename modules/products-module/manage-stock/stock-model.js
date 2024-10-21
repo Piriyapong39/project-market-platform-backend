@@ -23,10 +23,13 @@ class Model {
                 }
             )
             const resultsData = resultsProduct.map( e => {
-                e.pic_paths = e.pic_paths.split(";")
-                return e
+                if(e.pic_paths){
+                    e.pic_paths = e.pic_paths.split(";")
+                    return e
+                }else{
+                    return e
+                }
             })
-            console.log(resultsData)
             return resultsData
         } catch (error) {
             throw error
@@ -42,8 +45,7 @@ class Model {
                     type: QueryTypes.SELECT
                 }
             )
-            console.log(category_id)
-            console.log(productId[0].product_id)
+
             // create folder
             const folderName = path.join(__dirname, `../../../public/uploads/product-pictures/${category_id}/${productId[0].product_id}`)
             if(!fs.existsSync(folderName)) {
@@ -51,7 +53,7 @@ class Model {
             }else{
                 throw new Error("Cannot create picture folder")
             }
-            console.log(productId)
+
             // Loop create picture files
             const picturePaths = await Promise.all(pictureFiles.map((file) => {
                 return upload.uploadProductPic(file, category_id, productId[0].product_id);
@@ -72,7 +74,6 @@ class Model {
                     type: QueryTypes.INSERT
                 }
             )
-            console.log(resultInsertItem)
             return resultInsertItem
         } catch (error) {
             throw error

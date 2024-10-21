@@ -23,6 +23,7 @@ Router.get("/get-product", authentication, isSeller, async (req, res) => {
 
 Router.post("/insert-product", authentication, isSeller, uploadFiles, async (req, res) => {
     try {
+        console.log(1)
         return res.status(201).json({success: 1, data: await stock.insertProduct(req)})
     } catch (error) {
         req.errorCollector.collectError(error)
