@@ -46,13 +46,20 @@ class Model {
                 }
             )
 
+            console.log(productId)
+
             // create folder
             const folderName = path.join(__dirname, `../../../public/uploads/product-pictures/${category_id}/${productId[0].product_id}`)
-            if(!fs.existsSync(folderName)) {
-                fs.mkdirSync(folderName);
-            }else{
-                throw new Error("Cannot create picture folder")
+
+            // delete file
+            if (fs.existsSync(folderName)) {
+                const files = fs.readdirSync(folderName);
+                for (const file of files) {
+                    fs.unlinkSync(path.join(folderName, file));
+                }
             }
+            fs.mkdirSync(folderName, { recursive: true });
+
 
             // Loop create picture files
             const picturePaths = await Promise.all(pictureFiles.map((file) => {

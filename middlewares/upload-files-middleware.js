@@ -2,7 +2,6 @@
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
 const uploadFiles = (req, res, next) => {
     const uploadHandler = upload.array('files', 5); 
     uploadHandler(req, res, (error) => {
@@ -10,10 +9,10 @@ const uploadFiles = (req, res, next) => {
             console.log(error);
             return res.status(400).json({success: 0, error: error.message});
         }
+        console.log(1)
         next();
     });
 }
-
 module.exports = uploadFiles;
 
 

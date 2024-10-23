@@ -7,6 +7,12 @@
 
 
 #Ignore files in pictures and pdfs
-/public/uploads/product-pictures/*
+
+/public/uploads/product-pictures/1/*
+/public/uploads/product-pictures/2/*
+/public/uploads/product-pictures/3/*
+/public/uploads/product-pictures/4/*
+/public/uploads/product-pictures/5/*
+/public/uploads/product-pictures/6/*
 /public/uploads/pdf/*
 /public/uploads/exel/*

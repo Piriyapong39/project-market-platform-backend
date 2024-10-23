@@ -16,9 +16,9 @@ class Stock extends Model {
     }
     async insertProduct(req){
         try {
-            console.log(2)
             const user_id = req.user.user_id
             const pictureFiles = req.files
+            console.log(pictureFiles)
             const { product_name, product_desc, product_stock, product_price, category_id} = req.body
             if(!product_name || !product_desc || !product_stock || !product_price || !category_id){
                 throw new Error("You are missing some data please insert all data")
