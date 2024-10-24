@@ -11,6 +11,7 @@ class JwtService {
     }
     async genNewToken (user_id, email){
         try {
+            
             const resulstData = await sequelize.query(
                 'CALL sp_get_user_info(:user_id, :email)',
                 {
